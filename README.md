@@ -22,16 +22,8 @@ Paths are relative to the repository root, so run all commands from that directo
 
 ## SaProt Feature Generation
 
-Feature source and checkpoint
+Feature source and checkpoint(The preprocessed feature files are available for download via the following cloud storage link: https://pan.baidu.com/s/1xAY58R1z4stsc426TLmh5g?pwd=6a3s)
 
-The residue-level SaProt embeddings were generated locally using the feature-extraction pipeline provided in this repository, rather than obtained from third-party precomputed embeddings. For each protein, the amino-acid sequence was read from the corresponding dataset pickle file, and the corresponding structural coordinates were loaded from Dataset/pdb/<protein_ID>.pdb.
-
-The feature extractor loads the pretrained SaProt 650M AF2 checkpoint released by Westlake (westlake-repl/SaProt_650M_AF2). The corresponding SaProt tokenizer processes the amino-acid and 3Di structural tokens to generate residue-level representations.
-
-The resulting embeddings are saved as individual .npy files in Feature/SaProt-WslFoldseek/. Each array contains one 1,280-dimensional embedding per residue, with the residue order consistent with the corresponding amino-acid sequence in the dataset pickle file.
-
-Feature extraction procedure
-
-SaProt inference is integrated into the model training pipeline and is automatically triggered by the corresponding training entry point. No separate manual invocation of SaProt is required.
-
-The feature-extraction implementation is located in <feature_extraction_script.py>, and the corresponding function is called by <training_script.py>. To execute the pipeline, run the following command from the repository root:
+The residue-level feature files were generated locally using our feature-extraction script, rather than downloaded as precomputed embeddings. The input amino-acid sequences were read from the dataset pickle files, and the corresponding coordinate files were provided as Dataset/pdb/<protein_ID>.pdb. The resulting per-protein embeddings were saved as .npy files in Feature/SaProt-WslFoldseek; each array contains one 1,280-dimensional embedding per residue.
+We used the SaProt 650M AF2 checkpoint released by Westlake (westlake-repl/SaProt_650M_AF2). SaProt is invoked automatically as part of the model training pipeline, without requiring separate script execution or additional commands.
+For UBtest_31-6, a matching PDB file was available for each of the 25 protein chains. We ran Foldseek’s structureto3didescriptor command on each structure through WSL to obtain its 3Di sequence. The Foldseek amino-acid sequence was aligned to the dataset sequence; positions without an aligned 3Di token were represented by #. Each amino acid was then paired with its corresponding 3Di token and supplied to the SaProt tokenizer. The resulting residue embeddings were saved in the same .npy format.
